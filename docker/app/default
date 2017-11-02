@@ -1,0 +1,31 @@
+server {
+    listen 80 default_server;
+
+    root /var/www/html;
+
+    server_name _;
+ 
+    index index.html index.htm index.php;
+    charset utf-8;
+
+    access_log /var/log/nginx/hakase-access.log;
+    error_log /var/log/nginx/hakase-error.log;
+    
+    location = /favicon.ico {log_not_found off; access_log off;}
+    location = /robots.txt  {log_not_found off; access_log off;}
+    location / {
+        try_files $uri $uri/ /index.php?$is_args$args;
+    }
+ 
+    location ~ \.php$ {
+        include snippets/fastcgi-php.conf;
+        # it expects php to run in the same container
+        fastcgi_pass unix:/run/php/php7.0-fpm.sock;
+
+    }
+
+    error_page 404 /index.php;
+    location ~ /\.ht {
+      deny all;
+    }
+}
