@@ -1,5 +1,5 @@
 #!/usr/bin/env groovy
-
+#comment
 node('master') {
     try {
         stage('build') {
