@@ -3,36 +3,51 @@
 # and not to type huge complicated comands with different var, but use this file
 # Set environment variables for dev or CI
 
+if [ ! -z "$BUILD_NUMBER" ]; then
+  # we need full path here becouse /sbin is not in user Jenkins's $PATH
+  export XDEBUG_HOST=$(/sbin/ifconfig docker0 | grep "inet addr" | cut -d ':' -f 2 | cut -d ' ' -f 1)
+else
+  export XDEBUG_HOST=$(ipconfig getifaddr en1)
+fi
+
 
 export APP_ENV=${APP_ENV:-local}
-export APP_PORT=${APP_PORT:-8099}
+export APP_PORT=${APP_PORT:-80}
 export DB_PORT=${DB_PORT:-3306}
 export DB_ROOT_PASS=${DB_ROOT_PASS:-secret}
 export DB_NAME=${DB_NAME:-helpspot}
 export DB_USER=${DB_USER:-helpspot}
 export DB_PASS=${DB_PASS:-secret}
-source .env;
-# Decide which docker-compose file to use
-COMPOSE_FILE="dev"
 
-# Disable pseudo-TTY allocation for CI (Jenkins)
-TTY=""
-# BUILD_NUMBER is env var provided by Jenkins
-if [ ! -z "$BUILD_NUMBER" ]; then 
-  COMPOSE_FILE="ci"
-  TTY="-T"
-fi
+# prefer local .env file for port and stuff
 
-COMPOSE="docker-compose -f docker-compose.$COMPOSE_FILE.yml"
+
 
 # if there is arguments grater then 0 pass all the args to docker-compose
 if [ $# -gt 0 ];then
+  # Decide which docker-compose file to use
+  COMPOSE_FILE="dev"
+
+  # Disable pseudo-TTY allocation for CI (Jenkins)
+  TTY=""
+  # BUILD_NUMBER is env var provided by Jenkins
+  if [ ! -z "$BUILD_NUMBER" ]; then 
+    COMPOSE_FILE="ci"
+    TTY="-T"
+  fi
+  COMPOSE="docker-compose -f docker-compose.$COMPOSE_FILE.yml"
     if [ "$1" == "art" ]; then
         shift 1
         $COMPOSE run --rm $TTY \
             -w /var/www/html \
             app \
             php artisan "$@"
+    # backup mysql db
+    elif [ "$1" == "restart" ]; then
+        shift 1
+        $COMPOSE exec \
+          app \
+          sh -c "supervisorctl restart $@"
     # If "composer" is used, pass-thru to "composer"
     # inside a new container
     elif [ "$1" == "composer" ]; then
@@ -81,6 +96,6 @@ if [ $# -gt 0 ];then
 else
     $COMPOSE ps
 fi
-
-# echo $APP_PORT $DB_USER $DB_PASS
+# TODO: only run with up/start commands
+echo 'nginx port: '$APP_PORT db port: $DB_PORT
 
