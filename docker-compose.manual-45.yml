@@ -1,0 +1,46 @@
+version: '2'
+services:
+  nginx:
+    image: solmong/nginx:latest
+    volumes:
+     - /srv/application:/var/www/html
+    networks:
+     - appnet
+    ports:
+     - "80:80"
+    restart: always
+  php:
+    image: solmong/php:latest
+    volumes: 
+      - /srv/application:/var/www/html
+    networks:
+      - appnet
+    restart: always
+  db:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_DATABASE: homestead
+      MYSQL_USER: homestead
+      MYSQL_PASSWORD: secret
+    networks: 
+      - appnet
+    volumes:
+      - data:/var/lib/mysql
+    restart: always
+  redis:
+    image: redis:alpine
+    volumes:
+     - redisdata:/data
+    networks: 
+      - appnet
+    restart: always
+networks:
+  appnet:
+    driver: "bridge"
+volumes:
+  data:
+    driver: "local"
+  redisdata:
+    driver: "local"
+
