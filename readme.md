@@ -8,7 +8,7 @@ This is an example repository of a "Dockerized" application, as covered on the [
 # Get repo
 git clone https://github.com/shipping-docker/dockerized-app.git
 cd dockerized-app
-
+#
 # Build app/node images
 ./develop build
 
