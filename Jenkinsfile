@@ -26,8 +26,7 @@ node('master') {
             }
 
             stage('deploy') {
-                # Enter your own IP-address in here.
-                # sh 'ssh -i ~/.ssh/id_sd ubuntu@172.31.52.48 /opt/deploy'
+                sh 'ssh -i ~/.ssh/jenkins.pem ubuntu@172.31.24.28 /opt/deploy'
             }
         }
     } catch(error) {
