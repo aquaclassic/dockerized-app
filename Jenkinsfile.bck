@@ -1,5 +1,6 @@
 #!/usr/bin/env groovy
 node('master') {
+    try {
         stage('build') {
             git url: 'git@github.com:aquaclassic/dockerized-app'
             // Start services (Let docker-compose build containers for testing)
@@ -18,4 +19,21 @@ node('master') {
         stage('test') {
             sh "APP_ENV=testing ./develop test"
         }
+
+        if( env.BRANCH_NAME == 'master' ) {
+            stage('package') {
+                sh './docker/build'
+            }
+
+            stage('deploy') {
+                sh 'ssh -i /var/lib/jenkins/.ssh/jenkins.pem ubuntu@172.31.24.28 /opt/deploy'
+            }
+        }
+    } catch(error) {
+        // Maybe some alerting?
+        throw error
+    } finally {
+        // Spin down containers no matter what happens
+        sh './develop down'
+    }
 }
