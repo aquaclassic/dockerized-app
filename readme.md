@@ -1,11 +1,11 @@
 # Dockerizing Your Application
 
-This is an example repo2sitory of a "Dockerized" application, as covered on the [Dockerizing Your Application](https://shippingdocker.com/dockerized-app/) preview series from [shippingdocker.com](https://shippingdocker.com).
+This is an example repo3sitory of a "Dockerized" application, as covered on the [Dockerizing Your Application](https://shippingdocker.com/dockerized-app/) preview series from [shippingdocker.com](https://shippingdocker.com).
 
 ## Try It Out
 
 ```bash
-# Get repo2 24
+# Get repo3 24
 git clone https://github.com/shipping-docker/dockerized-app.git
 cd dockerized-app
 
