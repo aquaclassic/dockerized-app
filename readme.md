@@ -5,7 +5,7 @@ This is an example repository of a "Dockerized" application, as covered on the [
 ## Try It Out
 
 ```bash
-# Get repo 22
+# Get repo 24
 git clone https://github.com/shipping-docker/dockerized-app.git
 cd dockerized-app
 
