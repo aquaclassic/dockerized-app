@@ -2,5 +2,7 @@
 
 # set the context to ./app|./node directory, its not going to save anything there, this is becouse to make sure proper
 # references are made to files if specified in Dockerfile
-docker build -f app/Dockerfile -t ajando/app:latest ./app
-docker build -f node/Dockerfile -t ajando/node:latest ./node
+# docker build -f ./docker/app/Dockerfile -t ajando/app:latest ./app
+# docker build -f ./docker/node/Dockerfile -t ajando/node:latest ./node
+docker build -t ajando/app:latest --file $(pwd)/docker/app/Dockerfile $(pwd)/docker/app
+docker build -t ajando/app:latest --file $(pwd)/docker/node/Dockerfile $(pwd)/docker/node
