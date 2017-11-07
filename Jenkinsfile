@@ -27,7 +27,7 @@ node('master') {
 
             stage('deploy') {
                 sh 'whoami'
-                sh 'sudo ssh -i ~/.ssh/jenkins.pem ubuntu@172.31.24.28 /opt/deploy'
+                sh 'ssh -i /var/lib/jenkins/.ssh/jenkins.pem ubuntu@172.31.24.28 /opt/deploy'
             }
         }
     } catch(error) {
