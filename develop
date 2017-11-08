@@ -26,7 +26,7 @@ if [ ! -z "$BUILD_NUMBER" ]; then
   TTY="-T"
 fi
 
-COMPOSE="docker-compose -f docker-compose.$COMPOSE_FILE.yml"
+COMPOSE="docker-compose -f $(pwd)/docker-compose.$COMPOSE_FILE.yml"
 
 # Decide which docker-compose file to use
 
