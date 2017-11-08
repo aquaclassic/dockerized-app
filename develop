@@ -55,7 +55,6 @@ if [ $# -gt 0 ];then
     # If "test" is used, run unit tests,
     # pass-thru any extra arguments to php-unit
   elif [ "$1" == "test" ]; then
-    echo 'hello i do '
     shift 1
     $COMPOSE run --rm $TTY \
       -w /var/www/html \
