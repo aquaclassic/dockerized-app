@@ -20,16 +20,17 @@ export DB_PASS=${DB_PASS:-secret}
 
 # source .env;
 
-COMPOSE="docker-compose -f docker-compose.$COMPOSE_FILE.yml"
-
-# Decide which docker-compose file to use
 COMPOSE_FILE="dev"
-
-# BUILD_NUMBER is env var provided by Jenkins
 if [ ! -z "$BUILD_NUMBER" ]; then 
   COMPOSE_FILE="ci"
   TTY="-T"
 fi
+
+COMPOSE="docker-compose -f docker-compose.$COMPOSE_FILE.yml"
+
+# Decide which docker-compose file to use
+
+# BUILD_NUMBER is env var provided by Jenkins
 
 # if there is arguments grater then 0 pass all the args to docker-compose
 if [ $# -gt 0 ];then
