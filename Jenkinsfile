@@ -12,7 +12,7 @@ node('master') {
 
             // Create .env file for testing
             //sh "cp .env.example .env"
-            sh "/var/lib/jenkins/.venv/bin/aws s3 cp s3://dmc2-secrets2/env-ci .env"
+            sh "/var/lib/jenkins/.venv/bin/aws s3 cp s3://dmc-secrets2/env-ci .env"
             sh "./develop art key:generate"
             sh 'sed -i "s/REDIS_HOST=.*/REDIS_HOST=redis/" .env'
             sh 'sed -i "s/CACHE_DRIVER=.*/CACHE_DRIVER=redis/" .env'

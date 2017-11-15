@@ -14,6 +14,10 @@ specific user.
    buckets, with python and aws-ci and python 2.7
    user ubuntu is doing the installs
    ```
+   https://stackoverflow.com/questions/14547631/python-locale-error-unsupported-locale-setting
+   export LC_ALL="en_US.UTF-8"
+   export LC_CTYPE="en_US.UTF-8"
+   sudo dpkg-reconfigure locales
    sudo apt-get install -y python2.7 python-pip
    sudo pip install -U pip
    sudo pip install virtualenv
