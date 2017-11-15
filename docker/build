@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-
+# Controling with Jenkinsfile in master repo
 # set the context to ./app|./node directory, its not going to save anything there, this is becouse to make sure proper
 # references are made to files if specified in Dockerfile
 # docker build -f ./docker/app/Dockerfile -t ajando/app:latest ./app
@@ -45,11 +45,16 @@ cd $DIR/app/packaged
 # ./develop gulp --production
 
 # Copy secrets from s3 bucket, .env suitable for production and copy it to .env
-# /var/lib/jenkins/.venv/bin/aws s3 cp s3://shippingdocker-secrets/env-prod .env # you need this depending on dev
+/var/lib/jenkins/.venv/bin/aws s3 cp s3://dmc-secrets2/env-prod .env # you need this depending on dev
 
 cd $DIR/app
 
-docker build -t ajando/app:latest -t ajando/app:$HASH .
+docker build \
+  -t localhost:5000/ajando/app:latest \
+  -t localhost:5000/ajando/app:$HASH .
+
+docker push localhost:5000/ajando/app:latest
+docker push localhost:5000/ajando/app:$HASH
 
 # Clean up packaged directory 
 cd $DIR/app/packaged
