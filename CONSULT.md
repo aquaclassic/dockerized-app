@@ -41,3 +41,9 @@ ARN all: arn:aws:s3:::dmc-secrets2/test.txt
 3. Test: `aws s3 cp s3://dmc-secrets2/test.txt ./test.txt` # you must be in that
    env
 9. 
+
+### Starting production container
+
+docker run -d --network=ajandonet -e CONTAINER_ENV=production --restart=always --name="shipit1510853629" localhost:5000/ajando/app 
+
+docker run -d --network=ajandonet --restart=always -v /opt/conf.d:/etc/nginx/conf.d -p 80:80 nginx:alpine

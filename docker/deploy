@@ -18,6 +18,7 @@ NEW_CONTAINER="shipit`date +"%s"`"
 #
 
 # Pull latest
+echo 'pulling images'
 docker pull localhost:5000/ajando/app
 
 # Don't deploy if latest image is running
@@ -36,8 +37,8 @@ fi
 
 # Start new instance
 # netowk needs to be created manually
-NEW_APP_CONTAINER=$(sudo docker run -d --network=ajandonet -e CONTAINER_ENV=production --restart=always
---name="$NEW_CONTAINER" localhost:5000/ajando/app)
+echo 'starting new instance'
+NEW_APP_CONTAINER=$(sudo docker run -d --network=ajandonet -e CONTAINER_ENV=production --restart=always --name="$NEW_CONTAINER" localhost:5000/ajando/app)
 
 # NEW_QUEUE_CONTAINER=$(sudo docker run -d --network=ajandonet --name="queueit" -e CONTAINER_ENV=production
 # --restart=always -w /var/www/html localhost:5000/ajando/app php artisan queue:work
@@ -53,10 +54,14 @@ echo "Started new container $NEW_APP_CONTAINER"
 sudo sed -i "s/server shipit.*/server $NEW_CONTAINER:80;/" /opt/conf.d/default.conf
 
 # Configtest Nginx get status code with $? -> 0 is success
-sudo docker exec nginx nginx -t NGINX_STABLE=$?
+# inside nginx container run 'nginx -t' to test config and capturint that into NGINX_STABLE
+sudo docker exec nginx nginx -t 
+
+NGINX_STABLE=$?
 
 if [ $NGINX_STABLE -eq 0 ]; then
-  # Reload Nginx
+  # Reload Nginx => sending HUP to container named nginx
+  # Sending 'kill' signal to nginx container Not telling it to stop but to reload
   sudo docker kill -s HUP nginx
 
   # Stop older instance
@@ -65,7 +70,9 @@ if [ $NGINX_STABLE -eq 0 ]; then
   echo "Removed old container $APP_CONTAINER"
 
   # Cleanup, if any dangling images
-  DANGLING_IMAGES=$(sudo ocker image ls -f "dangling=true" -q)
+  # every time we do pull on image 'latest' old image gets untaged becouse 'old' img is also called taged latest
+  # dangling image is image without tag
+  DANGLING_IMAGES=$(sudo docker image ls -f "dangling=true" -q)
   if [ ! -z "$DANGLING_IMAGES" ]; then
     sudo docker image rm $(sudo docker image ls -f "dangling=true" -q)
   fi
