@@ -8,7 +8,7 @@
 # docker build -t ajando/app:latest --file $(pwd)/docker/node/Dockerfile $(pwd)/docker/node
 
 # Bail out on first error 
-echo stat: 1: $(data) starting the ./build script
+echo stat: 1: $(date) starting the ./build script
 set -e
 
 # Get the directory of the build script 
@@ -36,7 +36,7 @@ git archive --format=tar --worktree-attributes $HASH | tar -xf - -C $DIR/app/pac
 ## now you are in the packaged dir and do whatever it needs to be done
 cd $DIR/app/packaged
 
-echo stat: 2: $(data) starting the composer install
+echo stat: 2: $(date) starting the composer install
 ./develop composer install --no-dev
 
 
@@ -45,7 +45,7 @@ echo stat: 2: $(data) starting the composer install
 
 # ./develop gulp --production
 
-echo stat: 3: $(data) download s3 dmc-secrets
+echo stat: 3: $(date) download s3 dmc-secrets
 # Copy secrets from s3 bucket, .env suitable for production and copy it to .env
 /var/lib/jenkins/.venv/bin/aws s3 cp s3://dmc-secrets2/env-prod .env # you need this depending on dev
 /var/lib/jenkins/.venv/bin/aws s3 cp s3://dmc-secrets2/config.yml config.yml
@@ -60,7 +60,7 @@ echo stat: 5: $(date) start pushing to privat hub
 docker push localhost:5000/ajando/app:latest
 docker push localhost:5000/ajando/app:$HASH
 
-echo stat: 6: (date) end pushing to privat hub
+echo stat: 6: $(date) end pushing to privat hub
 # Clean up packaged directory 
 cd $DIR/app/packaged
 
