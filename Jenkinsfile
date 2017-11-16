@@ -5,25 +5,18 @@ node('master') {
         stage('build') {
             git url: 'git@github.com:aquaclassic/dockerized-app'
             // Start services (Let docker-compose build containers for testing)
-            sh "echo stat: 1: $(date) starting containers 'develop up' up "
             sh "./develop up -d"
 
             // Get composer dependencies
-
-            sh "echo stat: 2: $(date) starting compoer install"
             sh "./develop composer install"
 
             // Create .env file for testing
-            //sh "cp .env.example .env" awscli needs to be installed and setup
+            //sh "cp .env.example .env"
             sh "/var/lib/jenkins/.venv/bin/aws s3 cp s3://dmc-secrets2/env-ci .env"
-
-            sh "echo stat: 3: $(date) start art key:gen"
             sh "./develop art key:generate"
             sh 'sed -i "s/REDIS_HOST=.*/REDIS_HOST=redis/" .env'
             sh 'sed -i "s/CACHE_DRIVER=.*/CACHE_DRIVER=redis/" .env'
             sh 'sed -i "s/SESSION_DRIVER=.*/SESSION_DRIVER=redis/" .env'
-
-            sh "echo stat: 4: $(date) ENDING with seding .env"
         }
         stage('test') {
             sh "APP_ENV=testing ./develop test"
