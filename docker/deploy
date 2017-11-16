@@ -82,7 +82,7 @@ if [ $NGINX_STABLE -eq 0 ]; then
 
   # Stop older instance
   sudo docker stop $APP_CONTAINER
-  sudo docker srm -v $APP_CONTAINER
+  sudo docker rm -v $APP_CONTAINER
   echo "Removed old container $APP_CONTAINER"
 
   # Cleanup, if any dangling images
