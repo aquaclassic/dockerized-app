@@ -18,7 +18,23 @@ NEW_CONTAINER="shipit`date +"%s"`"
 #
 
 # Pull latest
-echo 'pulling images'
+echo 'pulling images...'
+REGISTRY=$(docker ps -q --filter="name=registry")
+
+if [ -z "$REGISTRY" ] ; then 
+	echo ">>> YO, there is no local registry running"
+
+	if [ ! -f /opt/config.yml ] ; then
+ 	    echo ">>> There is no config.yml in your /opt"
+	    exit 0
+	fi
+	echo ">>> Attempting to start registry on my own"
+	docker rm registry
+	docker run -d --name=registry \
+	-p 5000:5000 -v /opt/config.yml:/etc/docker/registry/config.yml \
+	registry:latest
+fi
+
 docker pull localhost:5000/ajando/app
 
 # Don't deploy if latest image is running

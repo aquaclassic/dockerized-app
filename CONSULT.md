@@ -47,3 +47,6 @@ ARN all: arn:aws:s3:::dmc-secrets2/test.txt
 docker run -d --network=ajandonet -e CONTAINER_ENV=production --restart=always --name="shipit1510853629" localhost:5000/ajando/app 
 
 docker run -d --network=ajandonet --restart=always -v /opt/conf.d:/etc/nginx/conf.d -p 80:80 nginx:alpine
+
+### Copy to protected folder
+rsync -a -e "ssh" --rsync-path="sudo rsync" <what> ubuntu@dmc.dev:/where/is/loc
