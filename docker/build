@@ -46,7 +46,7 @@ cd $DIR/app/packaged
 
 # Copy secrets from s3 bucket, .env suitable for production and copy it to .env
 /var/lib/jenkins/.venv/bin/aws s3 cp s3://dmc-secrets2/env-prod .env # you need this depending on dev
-
+/var/lib/jenkins/.venv/bin/aws s3 cp s3://dmc-secrets2/config.yml config.yml
 cd $DIR/app
 
 docker build \

@@ -18,8 +18,7 @@ export DB_NAME=${DB_NAME:-helpspot}
 export DB_USER=${DB_USER:-helpspot}
 export DB_PASS=${DB_PASS:-secret}
 
-# source .env;
-# echo $AWS_SECRET_KEY
+source .env;
 
 COMPOSE_FILE="dev"
 if [ ! -z "$BUILD_NUMBER" ]; then 
@@ -27,6 +26,10 @@ if [ ! -z "$BUILD_NUMBER" ]; then
   TTY="-T"
 fi
 
+if [ $COMPOSE_FILE == "dev" ]; then
+  echo downloading config.yml from bucket
+  aws s3 cp s3://dmc-secrets2/config.yml config.yml
+fi
 COMPOSE="docker-compose -f $(pwd)/docker-compose.$COMPOSE_FILE.yml"
 
 # Decide which docker-compose file to use
@@ -84,6 +87,10 @@ if [ $# -gt 0 ];then
             -w /var/www/html \
             node \
             ./node_modules/.bin/gulp "$@"
+      elif [ "$1" == "delall" ]; then
+          shift 1
+          docker stop $(docker ps -q)
+          docker rm $(docker ps -a -q)
     else
         $COMPOSE "$@"
     fi
