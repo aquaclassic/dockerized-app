@@ -11,7 +11,7 @@ node('master') {
             sh "./develop composer install"
 
             // Create .env file for testing
-            //sh "cp .env.example .env"
+            //sh "cp .env.example .env" awscli needs to be installed and setup
             sh "/var/lib/jenkins/.venv/bin/aws s3 cp s3://dmc-secrets2/env-ci .env"
             sh "./develop art key:generate"
             sh 'sed -i "s/REDIS_HOST=.*/REDIS_HOST=redis/" .env'

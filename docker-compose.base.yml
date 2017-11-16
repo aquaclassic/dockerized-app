@@ -24,6 +24,11 @@ services:
      - mysqldata:/var/lib/mysql
     networks:
      - sdnet
+  registry: 
+    image: registry:latest
+    restart: unless-stopped
+    volumes:
+     - ./config.yml:/etc/docker/registry/config.yml
   redis:
     image: redis:alpine
     volumes:

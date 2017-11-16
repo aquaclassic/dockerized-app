@@ -27,6 +27,13 @@ services:
     extends:
       file:    docker-compose.base.yml
       service: redis
+  registry:
+    extends:
+      file: docker-compose.base.yml
+      service: registry
+    ports:
+      - 5000:5000
+    container_name: registry
 networks:
   sdnet:
     driver: "bridge"

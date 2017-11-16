@@ -1,0 +1,79 @@
+#!/usr/bin/env bash
+# REQU
+# 1. This script need to be in /opt
+# 2. in /opt/conf.d => to share with nginx
+# 3. in conf.d/default.conf file
+######################################## 
+#
+# Get info on currently running "shipit" container
+#
+
+APP_CONTAINER=$(docker ps -a -q --filter="name=shipit")
+#QUEUE_CONTAINER=$(docker ps -a -q --filter="name=queueit") => not needing this
+NEW_CONTAINER="shipit`date +"%s"`"
+
+######################################## 
+#
+# Deploy a new container
+#
+
+# Pull latest
+docker pull localhost:5000/ajando/app
+
+# Don't deploy if latest image is running
+RUNNING_IMAGE=$(docker inspect $APP_CONTAINER | jq ".[0].Image")
+CURRENT_IMAGE=$(docker image inspect localhost:5000/ajando/app:latest | jq ".[0].Id")
+
+if [ "$CURRENT_IMAGE" == "$RUNNING_IMAGE" ]; then
+  echo ">>> Most recent image is already in use"
+  exit 0
+fi
+
+# Stop the queue server first, we can afford to stop it for a bit => not needint this
+# sudo docker stop $QUEUE_CONTAINER
+# sudo docker rm -v $QUEUE_CONTAINER
+# echo "Removed old queue container $QUEUE_CONTAINER"
+
+# Start new instance
+# netowk needs to be created manually
+NEW_APP_CONTAINER=$(sudo docker run -d --network=ajandonet -e CONTAINER_ENV=production --restart=always
+--name="$NEW_CONTAINER" localhost:5000/ajando/app)
+
+# NEW_QUEUE_CONTAINER=$(sudo docker run -d --network=ajandonet --name="queueit" -e CONTAINER_ENV=production
+# --restart=always -w /var/www/html localhost:5000/ajando/app php artisan queue:work
+# --queue=shipping-docker-production-fast, shipping-docker-production-slow --tries=3)
+
+# Wait for process to boot up
+sleep 5
+
+echo "Started new container $NEW_APP_CONTAINER"
+
+# UPDATE Nginx
+
+sudo sed -i "s/server shipit.*/server $NEW_CONTAINER:80;/" /opt/conf.d/default.conf
+
+# Configtest Nginx get status code with $? -> 0 is success
+sudo docker exec nginx nginx -t NGINX_STABLE=$?
+
+if [ $NGINX_STABLE -eq 0 ]; then
+  # Reload Nginx
+  sudo docker kill -s HUP nginx
+
+  # Stop older instance
+  sudo docker stop $APP_CONTAINER
+  sudo docker srm -v $APP_CONTAINER
+  echo "Removed old container $APP_CONTAINER"
+
+  # Cleanup, if any dangling images
+  DANGLING_IMAGES=$(sudo ocker image ls -f "dangling=true" -q)
+  if [ ! -z "$DANGLING_IMAGES" ]; then
+    sudo docker image rm $(sudo docker image ls -f "dangling=true" -q)
+  fi
+
+else 
+  echo "ERROR: Nginx configuration test failed"
+  exit 1
+fi
+
+
+

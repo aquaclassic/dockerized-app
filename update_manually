@@ -1,0 +1,4 @@
+sed -i "s/^DB_HOST.*$/DB_HOST=dmc.crvpfl0o5iba.eu-central-1.rds.amazonaws.com/g" /var/www/html/.env
+sed -i "s/^DB_DATABASE.*$/DB_DATABASE=dmc_one/g" /var/www/html/.env
+sed -i "s/^DB_USERNAME.*$/DB_USERNAME=dmc/g" /var/www/html/.env
+sed -i "s/^DB_PASSWORD.*$/DB_PASSWORD=water123/g" /var/www/html/.env
