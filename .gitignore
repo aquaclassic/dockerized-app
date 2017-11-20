@@ -10,3 +10,5 @@ docker/app/packaged/*
 env-prod
 env-ci
 config.yml
+env-ci
+env-prod*
